@@ -5,8 +5,9 @@ using namespace std;
 Mat removeSmallRegions(Mat img, int neighbors){
 	const int connectivity = neighbors;
 	Mat labelImage, stats, centroids;
+	//find the 4 direction connected components
 	int nLabels = connectedComponentsWithStats(img, labelImage, stats, centroids, connectivity, CV_32S);
-
+	// remove small region <150 one by one
     Mat mask(labelImage.size(), CV_8UC1, Scalar(0));
     Mat surfSup=stats.col(4)>150;
 
@@ -58,7 +59,7 @@ Mat rectify(Mat imgNeg){
 	HoughLines(imgSobel, lines, 1, CV_PI/180, 100, 0, 0 );
 
 	unordered_map<int, int> frequencyCount;
-
+	// find the most frequent angle that most lines detected align
 	for( size_t i = 0; i < lines.size(); i++ )
 	{
 	  float theta = lines[i][1];
@@ -73,15 +74,12 @@ Mat rectify(Mat imgNeg){
 	        currentMax = it->second;
 	    }
 	}
-
+	// print out the angle to debug
 	for (auto& t : frequencyCount)
 	    std::cout << t.first << " "
 	              << t.second << "\n";
 	printf("the angle is %d", currentMax);
 	fflush( stdout );
-
-
-
 
 	unsigned angle = arg_max;
 	printf("the angle is %d", angle);
@@ -90,9 +88,6 @@ Mat rectify(Mat imgNeg){
 	//Rotate image
 	//Mat imgRotate = imRotate(imgNeg,angle);
 	Mat imgGradient = imRotate(imgSobel, angle);
-	  namedWindow( "Display Image", WINDOW_AUTOSIZE );
-	  imshow( "Display Image", imgGradient );
-	  waitKey(0);
 	return imgGradient;
 }
 
@@ -100,23 +95,23 @@ Mat rectify(Mat imgNeg){
 
 int main( int argc, char** argv )
 {
+	//read in the image and resize so that fit in screen size
   Mat initialFrame = imread("images/input.jpg", CV_LOAD_IMAGE_COLOR);
   resize(initialFrame, initialFrame, Size(initialFrame.cols/4, initialFrame.rows/4));
 
-
+	//convert to gray
   Mat initialFrameGray;
   cvtColor(initialFrame, initialFrameGray, cv::COLOR_RGB2GRAY);
-
+	// perform binary threshloding
   Mat initialFrameBin;
   threshold ( initialFrameGray, initialFrameBin, 0, 255, THRESH_BINARY | THRESH_OTSU );
-
+	//remove the small region to denoise
   initialFrameBin = removeSmallRegions(initialFrameBin,4);
-
-
+	// rectify the image by Sobel filtering, hough transformation and rotation
   Mat initialFrameBinNeg;
   bitwise_not(initialFrameBin, initialFrameBinNeg);
   Mat initialFrameGrad = rectify(initialFrameBin);
-
+	// show the keyboard that is horizontal
   namedWindow( "Display Image", WINDOW_AUTOSIZE );
   imshow( "Display Image", initialFrameGrad );
   waitKey(0);
