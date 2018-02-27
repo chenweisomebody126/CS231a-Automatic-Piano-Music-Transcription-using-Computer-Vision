@@ -21,7 +21,7 @@ Mat removeSmallRegions(Mat img, int neighbors){
 
 	return r;
 }
-//https://stackoverflow.com/questions/38715363/how-to-implement-imrotate-of-matlab-in-opencv
+
 Mat imRotate(const Mat source, double angle) {
     cv::Mat dst;
     // Special Cases
@@ -39,55 +39,6 @@ Mat imRotate(const Mat source, double angle) {
 
     }
     return dst;
-}
-
-Mat findAngleViaHoughPeaks(Mat img){
-//	int height = img.rows;
-//	int width = img.cols;
-//	int img_diagonal = ceil(sqrt(height*height + width*width));
-//	int rhos[2*img_diagonal];
-//	for (int i =0; i< sizeof(rhos); i++){
-//		rhos[i] = i-img_diagonal;
-//	}
-//	double thetas[180];
-//	for (int i=0; i< sizeof(thetas); i++){
-//		thetas[0] = ((i-90) * M_PI) / 180;
-//	}
-//	Mat H(sizeof(rhos), sizeof(thetas), CV_32S, Scalar(0));
-//    Mat nonZeroCoordinates;
-//    findNonZero(img, nonZeroCoordinates);
-//    for (int i = 0; i < nonZeroCoordinates.total(); i++ ) {
-//    		Point pnt = nonZeroCoordinates.at<Point>(i);
-//    		for (int j=0; j<sizeof(thetas); j++){
-//    			int rho = int((pnt.x * cos(thetas[j]) + pnt.y * sin(thetas[j])) + img_diagonal);
-//    			H[rho, j] += 1;
-//    		}
-//        //cout << "Zero#" << i << ": " << nonZeroCoordinates.at<Point>(i).x << ", " << nonZeroCoordinates.at<Point>(i).y << endl;
-//    }
-//    //hough_peaks
-//    double minVal, maxVal;
-//    cv::minMaxLoc(H, &minVal, &maxVal);
-//    double threshold = 0.3*maxVal;
-//    int H1[H.total()];
-//    for (int i=0; i<H.rows; i++){
-//    		for (int j=0; j<H.cols; j++){
-//        		if(H[i, j]< threshold){
-//        			H1[i*H.rows+j] = 0;
-//        		} else{
-//        			H1[i*H.rows+j] = H[i, j];
-//        		}
-//    		}
-//    }
-//    int num_peaks = 20;
-//    kth_smallest_idx = quick_select(H1, 0, sizeof(H1)-1, sizeof(H1)-num_peaks);
-//
-//
-//    for (int ith_peak = 0; ith_peak< num_peaks; ith_peak++){
-//    		minMaxIdx()
-//    }
-//    indices =  np.argpartition(H.flatten(), -2)[-num_peaks:]
-//    return np.vstack(np.unravel_index(indices, H.shape)).T
-
 }
 
 
@@ -160,25 +111,6 @@ int main( int argc, char** argv )
   threshold ( initialFrameGray, initialFrameBin, 0, 255, THRESH_BINARY | THRESH_OTSU );
 
   initialFrameBin = removeSmallRegions(initialFrameBin,4);
-
-//  vector<Vec2f> lines;
-//  Canny(initialFrameBin, initialFrameBin, 50, 200, 3);
-//  HoughLines(initialFrameBin, lines, 1, CV_PI/180, 100, 0, 0 );
-//
-//  for( size_t i = 0; i < lines.size(); i++ )
-//  {
-//     float rho = lines[i][0], theta = lines[i][1];
-//     Point pt1, pt2;
-//     double a = cos(theta), b = sin(theta);
-//     double x0 = a*rho, y0 = b*rho;
-//     pt1.x = cvRound(x0 + 1000*(-b));
-//     pt1.y = cvRound(y0 + 1000*(a));
-//     pt2.x = cvRound(x0 - 1000*(-b));
-//     pt2.y = cvRound(y0 - 1000*(a));
-//     line( initialFrameBin, pt1, pt2, Scalar(0,0,255), 3, CV_AA);
-//  }
-//  imshow("detected lines", initialFrameBin);
-//  waitKey(0);
 
 
   Mat initialFrameBinNeg;
